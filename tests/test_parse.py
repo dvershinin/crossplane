@@ -109,6 +109,36 @@ def test_includes_regular():
     }
 
 
+def test_parse_string_simple_matches_file():
+    dirname = os.path.join(here, 'configs', 'simple')
+    config_path = os.path.join(dirname, 'nginx.conf')
+    with open(config_path, 'r') as f:
+        text = f.read()
+    payload_file = crossplane.parse(config_path)
+    payload_string = crossplane.parse_string(text, filename=config_path)
+    assert payload_file == payload_string
+
+
+def test_parse_string_includes_regular_matches_file():
+    dirname = os.path.join(here, 'configs', 'includes-regular')
+    config_path = os.path.join(dirname, 'nginx.conf')
+    with open(config_path, 'r') as f:
+        text = f.read()
+    payload_file = crossplane.parse(config_path)
+    payload_string = crossplane.parse_string(text, filename=config_path)
+    assert payload_file == payload_string
+
+
+def test_parse_string_includes_globbed_combined_matches_file():
+    dirname = os.path.join(here, 'configs', 'includes-globbed')
+    config_path = os.path.join(dirname, 'nginx.conf')
+    with open(config_path, 'r') as f:
+        text = f.read()
+    payload_file = crossplane.parse(config_path, combine=True)
+    payload_string = crossplane.parse_string(text, filename=config_path, combine=True)
+    assert payload_file == payload_string
+
+
 def test_includes_globbed():
     dirname = os.path.join(here, 'configs', 'includes-globbed')
     config = os.path.join(dirname, 'nginx.conf')

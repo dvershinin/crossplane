@@ -155,3 +155,16 @@ def lex(filename):
 def register_external_lexer(directives, lexer):
     for directive in directives:
         EXTERNAL_LEXERS[directive] = lexer
+
+
+def lex_string(text, filename=None):
+    """Generates tokens from an nginx config string.
+
+    :param text: configuration text to lex
+    :param filename: optional filename to use in error reporting
+    """
+    f = io.StringIO(text)
+    it = _lex_file_object(f)
+    it = _balance_braces(it, filename)
+    for token, line, quoted in it:
+        yield (token, line, quoted)

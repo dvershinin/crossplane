@@ -2,7 +2,7 @@
 import glob
 import os
 
-from .lexer import lex
+from .lexer import lex, lex_string
 from .analyzer import analyze, enter_block_ctx
 from .errors import NgxParserDirectiveError
 
@@ -22,35 +22,19 @@ def _prepare_if_args(stmt):
         args[:] = args[start:end]
 
 
-def parse(filename, onerror=None, catch_errors=True, ignore=(), single=False,
+def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
+        onerror=None, catch_errors=True, ignore=(), single=False,
         comments=False, strict=False, combine=False, check_ctx=True,
         check_args=True):
-    """
-    Parses an nginx config file and returns a nested dict payload
-
-    :param filename: string contianing the name of the config file to parse
-    :param onerror: function that determines what's saved in "callback"
-    :param catch_errors: bool; if False, parse stops after first error
-    :param ignore: list or tuple of directives to exclude from the payload
-    :param combine: bool; if True, use includes to create a single config obj
-    :param single: bool; if True, including from other files doesn't happen
-    :param comments: bool; if True, including comments to json payload
-    :param strict: bool; if True, unrecognized directives raise errors
-    :param check_ctx: bool; if True, runs context analysis on directives
-    :param check_args: bool; if True, runs arg count analysis on directives
-    :returns: a payload that describes the parsed nginx config
-    """
-    config_dir = os.path.dirname(filename)
-
     payload = {
         'status': 'ok',
         'errors': [],
         'config': [],
     }
 
-    # start with the main nginx config file/context
-    includes = [(filename, ())]  # stores (filename, config context) tuples
-    included = {filename: 0} # stores {filename: array index} map
+    # start with the main nginx config context
+    includes = [(initial_file, ())]  # stores (filename, config context) tuples
+    included = {initial_file: 0}  # stores {filename: array index} map
 
     def _handle_error(parsing, e):
         """Adds representaions of an error to the payload"""
@@ -215,10 +199,16 @@ def parse(filename, onerror=None, catch_errors=True, ignore=(), single=False,
         return parsed
 
     # the includes list grows as "include" directives are found in _parse
-    for fname, ctx in includes:
-        tokens = lex(fname)
+    for index, (fname, ctx) in enumerate(includes):
+        if index == 0:
+            tokens = initial_tokens
+            parsing_file = initial_file
+        else:
+            tokens = lex(fname)
+            parsing_file = fname
+
         parsing = {
-            'file': fname,
+            'file': parsing_file,
             'status': 'ok',
             'errors': [],
             'parsed': []
@@ -234,6 +224,65 @@ def parse(filename, onerror=None, catch_errors=True, ignore=(), single=False,
         return _combine_parsed_configs(payload)
     else:
         return payload
+
+
+def parse(filename, onerror=None, catch_errors=True, ignore=(), single=False,
+        comments=False, strict=False, combine=False, check_ctx=True,
+        check_args=True):
+    """
+    Parses an nginx config file and returns a nested dict payload
+
+    :param filename: string contianing the name of the config file to parse
+    :param onerror: function that determines what's saved in "callback"
+    :param catch_errors: bool; if False, parse stops after first error
+    :param ignore: list or tuple of directives to exclude from the payload
+    :param combine: bool; if True, use includes to create a single config obj
+    :param single: bool; if True, including from other files doesn't happen
+    :param comments: bool; if True, including comments to json payload
+    :param strict: bool; if True, unrecognized directives raise errors
+    :param check_ctx: bool; if True, runs context analysis on directives
+    :param check_args: bool; if True, runs arg count analysis on directives
+    :returns: a payload that describes the parsed nginx config
+    """
+    config_dir = os.path.dirname(filename)
+    initial_tokens = lex(filename)
+    return _parse_with_initial_tokens(
+        initial_tokens, filename, config_dir,
+        onerror=onerror, catch_errors=catch_errors, ignore=ignore,
+        single=single, comments=comments, strict=strict, combine=combine,
+        check_ctx=check_ctx, check_args=check_args
+    )
+
+
+def parse_string(text, filename=None, onerror=None, catch_errors=True, ignore=(),
+        single=False, comments=False, strict=False, combine=False, check_ctx=True,
+        check_args=True):
+    """
+    Parses an nginx config provided as a string and returns a nested dict payload
+
+    :param text: string containing the nginx config to parse
+    :param filename: optional filename used for error messages and include base
+    :param onerror: function that determines what's saved in "callback"
+    :param catch_errors: bool; if False, parse stops after first error
+    :param ignore: list or tuple of directives to exclude from the payload
+    :param combine: bool; if True, use includes to create a single config obj
+    :param single: bool; if True, including from other files doesn't happen
+    :param comments: bool; if True, including comments to json payload
+    :param strict: bool; if True, unrecognized directives raise errors
+    :param check_ctx: bool; if True, runs context analysis on directives
+    :param check_args: bool; if True, runs arg count analysis on directives
+    :returns: a payload that describes the parsed nginx config
+    """
+    # resolve base directory for relative include paths
+    base_filename = filename if filename is not None else '<string>'
+    config_dir = os.path.dirname(os.path.abspath(filename)) if filename else os.getcwd()
+    initial_tokens = lex_string(text, filename=filename)
+    return _parse_with_initial_tokens(
+        initial_tokens, base_filename, config_dir,
+        onerror=onerror, catch_errors=catch_errors, ignore=ignore,
+        single=single, comments=comments, strict=strict, combine=combine,
+        check_ctx=check_ctx, check_args=check_args
+    )
 
 
 def _combine_parsed_configs(old_payload):
