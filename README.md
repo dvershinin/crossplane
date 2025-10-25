@@ -18,8 +18,10 @@
       - [crossplane minify](#crossplane-minify)
   - [Python Module](#python-module)
       - [crossplane.parse()](#crossplaneparse)
+      - [crossplane.parse_string()](#crossplaneparse_string)
       - [crossplane.build()](#crossplanebuild)
       - [crossplane.lex()](#crossplanelex)
+      - [crossplane.lex_string()](#crossplanelex_string)
   - [Other Languages](#other-languages)
 
 ## Install
@@ -469,8 +471,8 @@ optional arguments:
 ## Python Module
 
 In addition to the command line tool, you can import `crossplane` as a
-python module. There are two basic functions that the module will
-provide you: `parse` and `lex`.
+python module. There are four basic functions that the module will
+provide you: `parse`, `parse_string`, `lex`, and `lex_string`.
 
 ### crossplane.parse()
 
@@ -482,6 +484,23 @@ payload = crossplane.parse('/etc/nginx/nginx.conf')
 This will return the same payload as described in the [crossplane
 parse](#crossplane-parse) section, except it will be Python dicts and
 not one giant JSON string.
+
+### crossplane.parse_string()
+
+```python
+import crossplane
+text = """
+events {}
+http {
+    include conf.d/*.conf;
+}
+"""
+payload = crossplane.parse_string(text, filename='/etc/nginx/nginx.conf')
+```
+
+Parses configuration provided as a string. If you pass `filename`, relative include
+patterns are resolved against its directory, and error messages reference it. Options
+mirror `crossplane.parse`.
 
 ### crossplane.build()
 
@@ -514,6 +533,17 @@ will result in a long list similar to what you can see in the
 [crossplane lex](#crossplane-lex) section when the `--line-numbers` flag
 is used, except it will obviously be a Python list of tuples and not one
 giant JSON string.
+
+### crossplane.lex_string()
+
+```python
+import crossplane
+text = "events { worker_connections 1024; }"
+tokens = list(crossplane.lex_string(text, filename='<string>'))
+```
+
+Lexes tokens from a configuration string. The optional `filename` is used for error
+reporting when brace-balance errors are detected.
 
 ## Other Languages
 
