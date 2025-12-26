@@ -5,8 +5,8 @@
 <p align="center">
 <a href="https://github.com/nginxinc/crossplane/actions/workflows/crossplane-ci.yml"><img src="https://github.com/nginxinc/crossplane/actions/workflows/crossplane-ci.yml/badge.svg"></a>
 <a href="https://github.com/nginxinc/crossplane/releases"><img src="https://img.shields.io/github/release/nginxinc/crossplane.svg"></a>
-<a href="https://pypi.python.org/pypi/crossplane"><img src="https://img.shields.io/pypi/l/crossplane.svg"></a>
-<a href="https://pypi.python.org/pypi/crossplane"><img src="https://img.shields.io/pypi/pyversions/crossplane.svg"></a>
+<a href="https://pypi.python.org/pypi/crossplane-ng"><img src="https://img.shields.io/pypi/l/crossplane-ng.svg"></a>
+<a href="https://pypi.python.org/pypi/crossplane-ng"><img src="https://img.shields.io/pypi/pyversions/crossplane-ng.svg"></a>
 </p>
 
   - [Install](#install)
@@ -30,7 +30,13 @@ You can install both the [Command Line
 Interface](#command-line-interface) and [Python Module](#python-module)
 via:
 
-    pip install crossplane
+    pip install crossplane-ng
+
+The import name remains `crossplane`:
+
+```python
+import crossplane
+```
 
 ## Command Line Interface
 
