@@ -42,4 +42,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - Docker image publishing to GitHub Container Registry (GHCR) in addition to Docker Hub.
 
+## [0.5.14] - 2025-12-26
+
+### Changed
+- GHCR image name is now `ghcr.io/dvershinin/crossplane` (Docker Hub remains `${DOCKER_USERNAME}/nginx-crossplane`).
+
 

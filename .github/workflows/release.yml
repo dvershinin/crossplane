@@ -130,7 +130,8 @@ jobs:
       packages: write
 
     env:
-      IMAGE_NAME: nginx-crossplane
+      DOCKERHUB_IMAGE_NAME: nginx-crossplane
+      GHCR_IMAGE_NAME: crossplane
 
     steps:
       - uses: actions/checkout@v4
@@ -159,8 +160,8 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: |
-            ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}
-            ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+            ${{ secrets.DOCKER_USERNAME }}/${{ env.DOCKERHUB_IMAGE_NAME }}
+            ghcr.io/${{ github.repository_owner }}/${{ env.GHCR_IMAGE_NAME }}
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
