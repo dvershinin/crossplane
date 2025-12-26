@@ -883,6 +883,19 @@ def test_parse_missing_semicolon():
     }
 
 
+def test_parse_string_unterminated_directive_at_eof(tmp_path):
+    filename = str(tmp_path / 'nginx.conf')
+    payload = crossplane.parse_string('user nobody', filename=filename)
+    assert payload['status'] == 'failed'
+    assert payload['errors'] == [
+        {
+            'file': filename,
+            'error': 'directive "user" is not terminated by ";" in %s:1' % filename,
+            'line': 1
+        }
+    ]
+
+
 def test_combine_parsed_missing_values():
     dirname = os.path.join(here, 'configs', 'includes-regular')
     config = os.path.join(dirname, 'nginx.conf')

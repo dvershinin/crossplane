@@ -102,14 +102,22 @@ def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
 
             # parse arguments by reading tokens
             args = stmt['args']
-            token, __, quoted = next(tokens)  # disregard line numbers of args
-            while token not in ('{', ';', '}') or quoted:
+            try:
+                token, __, quoted = next(tokens)  # disregard line numbers of args
+            except StopIteration:
+                token, quoted = None, False
+
+            while token is not None and (token not in ('{', ';', '}') or quoted):
                 if token.startswith('#') and not quoted:
                     comments_in_args.append(token[1:])
                 else:
                     stmt['args'].append(token)
 
-                token, __, quoted = next(tokens)
+                try:
+                    token, __, quoted = next(tokens)
+                except StopIteration:
+                    token, quoted = None, False
+                    break
 
             # consume the directive if it is ignored and move on
             if stmt['directive'] in ignore:

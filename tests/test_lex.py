@@ -92,3 +92,13 @@ def test_quoted_right_brace():
         '"referer": "$http_referer", ', '"agent": "$http_user_agent"', '}',
         ';', '}'
     ]
+
+
+def test_lex_string_flushes_last_token_at_eof():
+    tokens = list(crossplane.lex_string('events', filename='<string>'))
+    assert list((token, line) for token, line, quoted in tokens) == [('events', 1)]
+
+
+def test_lex_string_comment_without_trailing_newline():
+    tokens = list(crossplane.lex_string('#comment', filename='<string>'))
+    assert list((token, line) for token, line, quoted in tokens) == [('#comment', 1)]
