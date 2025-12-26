@@ -226,6 +226,18 @@ def test_build_multiple_comments_on_one_line():
     assert built == '#comment1\nuser root; #comment2 #comment3'
 
 
+def test_build_accepts_parse_payload_dict():
+    parsed_payload = crossplane.parse_string('user nginx;', filename='nginx.conf')
+    built = crossplane.build(parsed_payload, indent=4, tabs=False)
+    assert built == 'user nginx;'
+
+
+def test_build_accepts_config_list():
+    parsed_payload = crossplane.parse_string('user nginx;', filename='nginx.conf')
+    built = crossplane.build(parsed_payload['config'], indent=4, tabs=False)
+    assert built == 'user nginx;'
+
+
 
 def test_build_files_with_missing_status_and_errors(tmpdir):
     assert len(tmpdir.listdir()) == 0
