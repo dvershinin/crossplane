@@ -63,7 +63,14 @@ def _read_about():
 
     keys = ["__summary__", "__url__", "__version__", "__author__", "__email__", "__license__"]
     for key in keys:
-        m = re.search(r"^%s\\s*=\\s*['\\\"]([^'\\\"]+)['\\\"]\\s*$" % re.escape(key), contents, re.M)
+        # NOTE: This must match normal Python assignment like:
+        # __summary__ = '...'
+        # Keep escapes minimal; raw strings already handle backslashes.
+        m = re.search(
+            r"^%s\s*=\s*['\"]([^'\"]+)['\"]\s*$" % re.escape(key),
+            contents,
+            re.M,
+        )
         if not m:
             raise RuntimeError("Could not find %s in %s" % (key, init_py))
         about[key] = m.group(1)

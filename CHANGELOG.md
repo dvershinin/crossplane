@@ -22,4 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Changed
 - Renamed PyPI distribution to `nginx-crossplane` (because `crossplane-ng` is already taken by another fork: `https://github.com/qosmio/crossplane`).
 
+## [0.5.10] - 2025-12-26
+
+### Fixed
+- Packaging: fix metadata parsing in `setup.py` so editable installs work in CI (PEP 517/660).
+
 
