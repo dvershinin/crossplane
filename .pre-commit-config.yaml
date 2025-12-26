@@ -51,8 +51,17 @@ repos:
       - id: pytest-py36
         name: Run tests on Python 3.6
         description: Full test suite on minimum supported Python
-        entry: bash -c 'cd /Users/danila/Projects/crossplane && ~/.pyenv/versions/3.6.15/bin/python -m pytest tests/ -q --tb=line'
+        # Use CROSSPLANE_PY36 to override the interpreter path if needed.
+        entry: bash -c '"${CROSSPLANE_PY36:-${PYENV_ROOT:-$HOME/.pyenv}/versions/3.6.15/bin/python}" -m pytest tests/ -q --tb=line'
         language: system
         pass_filenames: false
         files: ^(crossplane/.*\.py|tests/.*\.py)$
         stages: [pre-commit]
+
+      # Prevent committing hardcoded absolute local paths (e.g. /Users/<name>/...)
+      - id: check-absolute-paths
+        name: Check for hardcoded absolute paths
+        description: Prevent committing absolute dev-machine paths (macOS/Linux/Windows home dirs)
+        entry: python3 scripts/check_absolute_paths.py
+        language: system
+        files: \.(py|ya?ml|toml)$
