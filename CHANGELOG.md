@@ -10,11 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Added
 - GitHub Actions release workflow gated on tests that:
   - builds and attaches `sdist`/`wheel` artifacts to a GitHub Release
-  - publishes the `crossplane-ng` distribution to PyPI
+  - publishes the distribution to PyPI
   - builds and pushes a multi-arch Docker image running the `crossplane` CLI
 
 ### Changed
-- PyPI distribution name is now `crossplane-ng` (import and CLI remain `crossplane`).
+- PyPI distribution name differs from the import/CLI name (`crossplane`).
 - Packaging no longer imports `crossplane` during builds to avoid import-time side effects.
+
+## [0.5.9] - 2025-12-26
+
+### Changed
+- Renamed PyPI distribution to `nginx-crossplane` (because `crossplane-ng` is already taken by another fork: `https://github.com/qosmio/crossplane`).
 
 

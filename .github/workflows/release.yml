@@ -127,7 +127,7 @@ jobs:
     if: startsWith(github.ref, 'refs/tags/v')
 
     env:
-      IMAGE_NAME: crossplane-ng
+      IMAGE_NAME: nginx-crossplane
 
     steps:
       - uses: actions/checkout@v4

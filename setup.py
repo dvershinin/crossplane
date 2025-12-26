@@ -74,14 +74,15 @@ ABOUT = _read_about()
 
 setup(
     # PyPI distribution name (intentionally different from import name `crossplane`)
-    name="crossplane-ng",
+    name="nginx-crossplane",
     version=ABOUT["__version__"],
     description=ABOUT["__summary__"],
     long_description=get_readme(),
     long_description_content_type='text/markdown',
     author=ABOUT["__author__"],
     author_email=ABOUT["__email__"],
-    url=ABOUT["__url__"],
+    # Point users at this fork's repo (upstream URL is still available in history)
+    url="https://github.com/dvershinin/crossplane",
     packages=find_packages(exclude=['tests','tests.*']),
     license=ABOUT["__license__"],
     classifiers=[
