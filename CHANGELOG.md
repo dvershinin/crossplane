@@ -27,4 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 - Packaging: fix metadata parsing in `setup.py` so editable installs work in CI (PEP 517/660).
 
+## [0.5.11] - 2025-12-26
+
+### Fixed
+- CI: run Python 3.6 tests in a `python:3.6` container on `ubuntu-latest` (avoid `ubuntu-20.04` runner queue/hangs).
+
 
