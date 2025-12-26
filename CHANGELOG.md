@@ -32,4 +32,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 - CI: run Python 3.6 tests in a `python:3.6` container on `ubuntu-latest` (avoid `ubuntu-20.04` runner queue/hangs).
 
+## [0.5.12] - 2025-12-26
+
+### Fixed
+- CI/Packaging: `pyproject.toml` build-system requirements now use env markers so Python 3.6 doesn't try to install `setuptools>=61`.
+
 
