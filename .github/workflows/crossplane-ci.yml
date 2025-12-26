@@ -3,6 +3,13 @@ name: Crossplane CI
 on:
   workflow_dispatch:
   push:
+    branches:
+      - master
+    paths-ignore:
+      - '**.md'
+  pull_request:
+    branches:
+      - master
     paths-ignore:
       - '**.md'
 
@@ -12,15 +19,21 @@ jobs:
 
     strategy:
       matrix:
-        python-version: ["2.7", "3.6", "3.7", "3.8", "3.9", "3.10", pypy-3.6, pypy-3.7, pypy-3.8, pypy-3.9]
+        # Keep this matrix to runtimes supported by GitHub-hosted runners.
+        python-version: ["3.10", "3.11", "3.12"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Run tox under Python ${{ matrix.python-version }}
+          cache: pip
+      - name: Install dependencies
         run: |
-          pip install tox
-          tox -e py
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install pytest
+      - name: Run tests
+        run: |
+          python -m pytest -q
