@@ -19,7 +19,11 @@ repos:
     hooks:
       - id: ruff
         args: [--fix, --exit-non-zero-on-fix]
+        # crossplane is a legacy codebase with Python 2 compatibility shims;
+        # limit ruff to scripts to avoid a massive reformat/lint-only migration.
+        files: ^scripts/.*\.py$
       - id: ruff-format
+        files: ^scripts/.*\.py$
 
   # Bandit for security scanning
   - repo: https://github.com/PyCQA/bandit
@@ -28,6 +32,9 @@ repos:
       - id: bandit
         args: ["-c", "pyproject.toml"]
         additional_dependencies: ["bandit[toml]"]
+        # Bandit is useful on our own scripts; the main package has known
+        # false positives (e.g. B105 on token buffers) and legacy patterns.
+        files: ^scripts/.*\.py$
 
   # Local hooks
   - repo: local
@@ -49,5 +56,3 @@ repos:
         pass_filenames: false
         files: ^(crossplane/.*\.py|tests/.*\.py)$
         stages: [pre-commit]
-
-

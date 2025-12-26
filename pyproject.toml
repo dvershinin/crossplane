@@ -14,5 +14,4 @@ ignore = []
 
 [tool.bandit]
 exclude_dirs = ["tests"]
-
-
+skips = ["B105"]

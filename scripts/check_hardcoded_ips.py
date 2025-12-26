@@ -8,7 +8,6 @@ Mirrors the intent of the gixy pre-commit hook (SonarCloud S1313-like).
 import re
 import sys
 
-
 IP_RE = re.compile(r"(?<![\\w.])(\\d{1,3}(?:\\.\\d{1,3}){3})(?![\\w.])")
 
 
@@ -55,5 +54,3 @@ def main(argv):
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv))
-
-
