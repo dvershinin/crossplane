@@ -37,4 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 ### Fixed
 - CI/Packaging: `pyproject.toml` build-system requirements now use env markers so Python 3.6 doesn't try to install `setuptools>=61`.
 
+## [0.5.13] - 2025-12-26
+
+### Added
+- Docker image publishing to GitHub Container Registry (GHCR) in addition to Docker Hub.
+
 
