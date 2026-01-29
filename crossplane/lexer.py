@@ -91,6 +91,11 @@ def _lex_file_object(file_obj, filename=None):
                 except StopIteration:
                     reason = 'unexpected end of file, expecting "}"'
                     raise NgxParserSyntaxError(reason, filename, token_line)
+            # After closing brace, check if whitespace ends this token
+            if char.isspace():
+                yield (token, token_line, False)
+                token = ''
+                continue
 
         # if a quote is found, add the whole string to the token buffer
         if char in ('"', "'"):
