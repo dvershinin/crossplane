@@ -5,8 +5,8 @@
 <p align="center">
 <a href="https://github.com/nginxinc/crossplane/actions/workflows/crossplane-ci.yml"><img src="https://github.com/nginxinc/crossplane/actions/workflows/crossplane-ci.yml/badge.svg"></a>
 <a href="https://github.com/nginxinc/crossplane/releases"><img src="https://img.shields.io/github/release/nginxinc/crossplane.svg"></a>
-<a href="https://pypi.python.org/pypi/nginx-crossplane"><img src="https://img.shields.io/pypi/l/nginx-crossplane.svg"></a>
-<a href="https://pypi.python.org/pypi/nginx-crossplane"><img src="https://img.shields.io/pypi/pyversions/nginx-crossplane.svg"></a>
+<a href="https://pypi.python.org/pypi/ngxparse"><img src="https://img.shields.io/pypi/l/ngxparse.svg"></a>
+<a href="https://pypi.python.org/pypi/ngxparse"><img src="https://img.shields.io/pypi/pyversions/ngxparse.svg"></a>
 </p>
 
   - [Install](#install)
@@ -30,7 +30,7 @@ You can install both the [Command Line
 Interface](#command-line-interface) and [Python Module](#python-module)
 via:
 
-    pip install nginx-crossplane
+    pip install ngxparse
 
 The import name remains `crossplane`:
 

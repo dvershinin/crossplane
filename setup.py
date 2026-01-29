@@ -81,7 +81,7 @@ ABOUT = _read_about()
 
 setup(
     # PyPI distribution name (intentionally different from import name `crossplane`)
-    name="nginx-crossplane",
+    name="ngxparse",
     version=ABOUT["__version__"],
     description=ABOUT["__summary__"],
     long_description=get_readme(),

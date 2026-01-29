@@ -130,8 +130,8 @@ jobs:
       packages: write
 
     env:
-      DOCKERHUB_IMAGE_NAME: nginx-crossplane
-      GHCR_IMAGE_NAME: crossplane
+      DOCKERHUB_IMAGE_NAME: ngxparse
+      GHCR_IMAGE_NAME: ngxparse
 
     steps:
       - uses: actions/checkout@v4
