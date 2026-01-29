@@ -178,13 +178,13 @@ def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
                         else:
                             raise e
 
-                for fname in fnames:
+                for include_file in fnames:
                     # the included set keeps files from being parsed twice
                     # TODO: handle files included from multiple contexts
-                    if fname not in included:
-                        included[fname] = len(includes)
-                        includes.append((fname, ctx))
-                    index = included[fname]
+                    if include_file not in included:
+                        included[include_file] = len(includes)
+                        includes.append((include_file, ctx))
+                    index = included[include_file]
                     stmt['includes'].append(index)
 
             # if this statement terminated with '{' then it is a block

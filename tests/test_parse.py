@@ -1075,3 +1075,111 @@ def test_non_unicode():
             }
         ]
     }
+
+
+def test_includes_regular_combined():
+    """Test that directives after includes have correct file attribute when combine=True.
+
+    This tests for a variable scope leak bug where the `fname` loop variable in the
+    include-handling block would shadow the outer `fname`, causing directives after
+    includes to have incorrect `file` attributes.
+    """
+    dirname = os.path.join(here, 'configs', 'includes-regular-combined')
+    config = os.path.join(dirname, 'nginx.conf')
+    payload = crossplane.parse(config, combine=True)
+    assert payload == {
+        'status': 'ok',
+        'errors': [],
+        'config': [
+            {
+                'file': os.path.join(dirname, 'nginx.conf'),
+                'status': 'ok',
+                'errors': [],
+                'parsed': [
+                    {
+                        'directive': 'events',
+                        'file': os.path.join(dirname, 'nginx.conf'),
+                        'line': 1,
+                        'args': [],
+                        'block': []
+                    },
+                    {
+                        'directive': 'http',
+                        'file': os.path.join(dirname, 'nginx.conf'),
+                        'line': 2,
+                        'args': [],
+                        'block': [
+                            {
+                                'directive': 'server',
+                                'file': os.path.join(dirname, 'server.conf'),
+                                'line': 1,
+                                'args': [],
+                                'block': [
+                                    {
+                                        'directive': 'listen',
+                                        'file': os.path.join(dirname, 'server.conf'),
+                                        'line': 2,
+                                        'args': ['8080']
+                                    }
+                                ]
+                            },
+                            {
+                                'directive': 'default_type',
+                                'file': os.path.join(dirname, 'nginx.conf'),
+                                'line': 4,
+                                'args': ['text/plain']
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+
+
+def test_parse_map_strict():
+    """Test that map blocks parse correctly in strict mode."""
+    dirname = os.path.join(here, 'configs', 'map')
+    config = os.path.join(dirname, 'nginx.conf')
+    payload = crossplane.parse(config, strict=True)
+    assert payload['status'] == 'ok'
+    assert payload['errors'] == []
+
+    # verify the structure
+    http_block = payload['config'][0]['parsed'][1]
+    assert http_block['directive'] == 'http'
+
+    # check first map block
+    map1 = http_block['block'][0]
+    assert map1['directive'] == 'map'
+    assert map1['args'] == ['$uri', '$new']
+    assert len(map1['block']) == 3  # default, ~^/news, ~^/blog
+
+    # check second map block has hostnames
+    map2 = http_block['block'][1]
+    assert map2['directive'] == 'map'
+    assert map2['args'] == ['$http_host', '$backend']
+    assert len(map2['block']) == 3  # hostnames, default, *.example.com
+
+
+def test_parse_types_strict():
+    """Test that types blocks parse correctly in strict mode."""
+    dirname = os.path.join(here, 'configs', 'types')
+    config = os.path.join(dirname, 'nginx.conf')
+    payload = crossplane.parse(config, strict=True)
+    assert payload['status'] == 'ok'
+    assert payload['errors'] == []
+
+    # verify the structure
+    http_block = payload['config'][0]['parsed'][1]
+    assert http_block['directive'] == 'http'
+
+    # check types block
+    types_block = http_block['block'][0]
+    assert types_block['directive'] == 'types'
+    assert len(types_block['block']) == 4  # text/html, text/css, application/javascript, image/png
+
+    # verify some MIME type entries
+    mime_entries = {stmt['directive']: stmt['args'] for stmt in types_block['block']}
+    assert mime_entries['text/html'] == ['html', 'htm']
+    assert mime_entries['text/css'] == ['css']

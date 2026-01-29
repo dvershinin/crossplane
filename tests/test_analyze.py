@@ -57,3 +57,68 @@ def test_flag_directive_args():
             raise Exception('bad args for flag directive: ' + repr(args))
         except crossplane.errors.NgxParserDirectiveArgumentsError as e:
             assert e.strerror.endswith('it must be "on" or "off"')
+
+
+def test_map_freeform_directives():
+    """Test that arbitrary directives are allowed inside map blocks."""
+    fname = '/path/to/nginx.conf'
+    ctx = ('http', 'map')
+
+    # test various map entries that would fail if treated as regular directives
+    freeform_stmts = [
+        {'directive': 'default', 'args': ['0'], 'line': 1},
+        {'directive': '~^/news', 'args': ['1'], 'line': 2},
+        {'directive': '*.example.com', 'args': ['backend1'], 'line': 3},
+        {'directive': 'hostnames', 'args': [], 'line': 4},
+        {'directive': '/api', 'args': ['api_backend'], 'line': 5},
+    ]
+
+    for stmt in freeform_stmts:
+        # should not raise any errors even in strict mode
+        crossplane.analyzer.analyze(fname, stmt, term=';', ctx=ctx, strict=True)
+
+
+def test_types_freeform_directives():
+    """Test that arbitrary MIME type directives are allowed inside types blocks."""
+    fname = '/path/to/nginx.conf'
+    ctx = ('http', 'types')
+
+    # test various types entries that would fail if treated as regular directives
+    freeform_stmts = [
+        {'directive': 'text/html', 'args': ['html', 'htm'], 'line': 1},
+        {'directive': 'text/css', 'args': ['css'], 'line': 2},
+        {'directive': 'application/javascript', 'args': ['js'], 'line': 3},
+        {'directive': 'image/png', 'args': ['png'], 'line': 4},
+    ]
+
+    for stmt in freeform_stmts:
+        # should not raise any errors even in strict mode
+        crossplane.analyzer.analyze(fname, stmt, term=';', ctx=ctx, strict=True)
+
+
+def test_geo_freeform_directives():
+    """Test that arbitrary directives are allowed inside geo blocks."""
+    fname = '/path/to/nginx.conf'
+    ctx = ('http', 'geo')
+
+    freeform_stmts = [
+        {'directive': 'default', 'args': ['0'], 'line': 1},
+        {'directive': '127.0.0.1', 'args': ['1'], 'line': 2},
+        {'directive': '10.0.0.0/8', 'args': ['internal'], 'line': 3},
+    ]
+
+    for stmt in freeform_stmts:
+        crossplane.analyzer.analyze(fname, stmt, term=';', ctx=ctx, strict=True)
+
+
+def test_charset_map_freeform_directives():
+    """Test that arbitrary directives are allowed inside charset_map blocks."""
+    fname = '/path/to/nginx.conf'
+    ctx = ('http', 'charset_map')
+
+    freeform_stmts = [
+        {'directive': '2F', 'args': ['/', '%2F'], 'line': 1},  # hex code mappings
+    ]
+
+    for stmt in freeform_stmts:
+        crossplane.analyzer.analyze(fname, stmt, term=';', ctx=ctx, strict=True)

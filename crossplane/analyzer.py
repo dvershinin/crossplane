@@ -2110,6 +2110,9 @@ CONTEXTS = {
     ('http', 'location', 'limit_except'): NGX_HTTP_LMT_CONF
 }
 
+# contexts where arbitrary directive names are allowed (map keys, MIME types, etc.)
+FREEFORM_CONTEXTS = {'map', 'types', 'charset_map', 'geo'}
+
 
 def enter_block_ctx(stmt, ctx):
     # don't nest because NGX_HTTP_LOC_CONF just means "location block in http"
@@ -2125,6 +2128,11 @@ def analyze(fname, stmt, term, ctx=(), strict=False, check_ctx=True,
 
     directive = stmt['directive']
     line = stmt['line']
+
+    # skip analysis for directives inside freeform contexts (map, types, etc.)
+    # where arbitrary directive names are allowed as mapping keys or MIME types
+    if ctx and ctx[-1] in FREEFORM_CONTEXTS:
+        return
 
     # if strict and directive isn't recognized then throw error
     if strict and directive not in DIRECTIVES:
