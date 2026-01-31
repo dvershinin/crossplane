@@ -37,7 +37,7 @@ def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
     included = {initial_file: 0}  # stores {filename: array index} map
 
     def _handle_error(parsing, e):
-        """Adds representaions of an error to the payload"""
+        """Adds representations of an error to the payload."""
         file = parsing['file']
         error = str(e)
         line = getattr(e, 'lineno', None)
@@ -147,7 +147,7 @@ def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
                         else:
                             break
 
-                    # keep on parsin'
+                    # keep on parsing
                     continue
                 else:
                     raise e
@@ -168,7 +168,8 @@ def _parse_with_initial_tokens(initial_tokens, initial_file, config_dir,
                     try:
                         # if the file pattern was explicit, nginx will check
                         # that the included file can be opened and read
-                        open(str(pattern)).close()
+                        with open(str(pattern)):
+                            pass
                         fnames = [pattern]
                     except Exception as e:
                         fnames = []
@@ -240,7 +241,7 @@ def parse(filename, onerror=None, catch_errors=True, ignore=(), single=False,
     """
     Parses an nginx config file and returns a nested dict payload
 
-    :param filename: string contianing the name of the config file to parse
+    :param filename: string containing the name of the config file to parse
     :param onerror: function that determines what's saved in "callback"
     :param catch_errors: bool; if False, parse stops after first error
     :param ignore: list or tuple of directives to exclude from the payload
